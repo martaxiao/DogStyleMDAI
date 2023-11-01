@@ -24,11 +24,30 @@ class SpringDogStyleApplicationTests {
 	
 	@Test
 	void contextLoads() {
+		System.out.println("-------------------------");
+		System.out.println("PRUEBA MAPEADO - DOGSTYLE");
+		System.out.println("-------------------------");
+		System.out.println();
+		System.out.println("Creación de usuarios y citas");
 		crearUsuariosyCitas();
+		System.out.println();
+		System.out.println("Mostramos todos los usuarios");
+		System.out.println("____________________________");
 		mostrarUsuarioConCitas();
+		System.out.println();
+		System.out.println("Eliminamos una cita cualquiera");
+		System.out.println("______________________________");
 		eliminarCita();
+		System.out.println("Mostramos de nuevo todos los usuarios");
+		System.out.println("_____________________________________");
 		mostrarUsuarioConCitas();
+		System.out.println();
+		System.out.println("Eliminamos un usuario cualquiera");
+		System.out.println("________________________________");
 		eliminarUsuario();
+		System.out.println();
+		System.out.println("Mostramos de nuevo todos los usuarios");
+		System.out.println("_____________________________________");
 		mostrarUsuarioConCitas();
 	}
 	
@@ -74,10 +93,7 @@ class SpringDogStyleApplicationTests {
 		cita22.setHora("17:30");
 		cita22.setLibre(true);
 		cita22.setUsuario(usuario2);
-
-		usuario.setCitas(List.of(cita11, cita12, cita13));
-		usuario2.setCitas(List.of(cita21, cita22));
-
+		
 		// Guardamos los usuarios
 		usuarioRepository.saveAll(List.of(usuario, usuario2));
 
@@ -89,7 +105,7 @@ class SpringDogStyleApplicationTests {
 		List<Usuario> usuarios = (List<Usuario>) usuarioRepository.findAll();
 		int numUsuario = 1;
 		for (Usuario usuario : usuarios) {
-			System.out.println("--------------------------");
+			System.out.println();
 			System.out.println("Información del usuario " + numUsuario + ": ");
 			System.out.println("--------------------------");
 			System.out.println("- ID: " + usuario.getId());
@@ -97,26 +113,30 @@ class SpringDogStyleApplicationTests {
 			System.out.println("- Username: " + usuario.getUsername());
 			System.out.println("- Password: " + usuario.getPassword());
 			System.out.println("- Teléfono: " + usuario.getTelefono());
-			System.out.println("-------");
-			System.out.println("Citas: ");
-			System.out.println("-------");
-
-			for (Cita cita : usuario.getCitas()) {
-				System.out.println("- ID de la Cita: " + cita.getId());
-				System.out.println("- Fecha: " + cita.getFecha());
-				System.out.println("- Hora: " + cita.getHora());
-				System.out.println("- Libre: " + cita.isLibre());
-				System.out.println("_________________________________");
-			}
+			System.out.println();
 			
-			numUsuario++;
+			//Mostramos las citas del usuario
+			List<Cita> citas = usuario.getCitas();
+			if(citas != null && !citas.isEmpty()) {
+				System.out.println("Citas del usuario " + numUsuario +": ");
+				System.out.println("--------------------");
+				
+				for (Cita cita : usuario.getCitas()) {
+					System.out.println("- ID de la Cita: " + cita.getId());
+					System.out.println("- Fecha: " + cita.getFecha());
+					System.out.println("- Hora: " + cita.getHora());
+					System.out.println("- Libre: " + cita.isLibre());
+					System.out.println("_________________________________");
+				}
+				numUsuario++;
+			} else {
+				System.out.println("El usuario con el ID " + usuario.getId() + " no tiene citas");
+			}
 		}
 	}
 
 	void eliminarCita() {
-		System.out.println("-------------");
-		System.out.println("Eliminar cita");
-		System.out.println("--------------");
+		System.out.println();
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Ingresa el ID del usuario: ");
 		Long userId = scanner.nextLong();
@@ -126,7 +146,7 @@ class SpringDogStyleApplicationTests {
 		List<Usuario> usuarios = (List<Usuario>) usuarioRepository.findAll();
 
 		if (usuario != null || usuarios.contains(usuario)) {
-			System.out.print("Ingrese la hora de la cita a borrar: ");
+			System.out.print("Ingrese la hora de la cita a borrar (hh:mm): ");
 			String hora = scanner.nextLine();
 
 			List<Cita> citas = usuario.getCitas();
@@ -139,24 +159,19 @@ class SpringDogStyleApplicationTests {
 					usuarioRepository.save(usuario); // Actualizamos el usuario en la BD
 					System.out.println("La cita ha sido eliminada con éxito");
 					citaEncontrada = true;
-					System.out.println();
 					break;
 				} 
 			}
 			if(!citaEncontrada) {
 				System.out.println("La hora de la cita no existe para el usuario " + userId);
-				System.out.println();
 			}
 		} else {
 			System.out.println("El usuario con el ID " + userId + " no se encuentra en la BD");
-			System.out.println();
 		}
 	}
 	
 	void eliminarUsuario() {
-		System.out.println("----------------");
-		System.out.println("Eliminar usuario");
-		System.out.println("----------------");
+		System.out.println();
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Ingresa el ID del usuario: ");
 		Long userId = scanner.nextLong();
@@ -176,11 +191,9 @@ class SpringDogStyleApplicationTests {
 			//Elimino al usuario después de eliminar todas sus citas
 			usuarioRepository.delete(usuario);
 			System.out.println("El usuario con ID " + userId + " y sus citas han sido eliminados con éxito");
-			System.out.println();
 		} else {
 			System.out.println("El usuario con el ID " + userId + " no se encuentra en la BD");
-			System.out.println();
 		}
 	}
-
+	
 }
